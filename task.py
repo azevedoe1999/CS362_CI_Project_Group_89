@@ -38,7 +38,7 @@ def my_datetime(num_sec):
                 break
         else:
             num_sec -= 31536000
-            
+
         year += 1
 
     # calculate how many months
