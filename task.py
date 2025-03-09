@@ -31,30 +31,21 @@ def my_datetime(num_sec):
 
     # calculate how many years
     while num_sec >= 31536000:
-        if year % 4 == 0 and year % 100 != 0:
-            if num_sec >= 31622400:  # is leap year
-                num_sec -= 31622400
-            else:
-                break
-        elif year % 400 == 0:
-            if num_sec >= 31622400:  # is leap year
-                num_sec -= 31622400
+        if (year % 4 == 0 and year % 100 != 0) or year % 400 == 0:
+            if num_sec >= 31622400:
+                num_sec -= 31622400  # is leap year
             else:
                 break
         else:
-            if num_sec >= 31536000:
-                num_sec -= 31536000
-            else:
-                break
+            num_sec -= 31536000
+            
         year += 1
 
     # calculate how many months
     while num_sec >= 86400:
         # gets current month
         if month == 2:  # month of Feb
-            if year % 4 == 0 and year % 100 != 0:
-                days = 29  # is leap year
-            elif year % 400 == 0:
+            if (year % 4 == 0 and year % 100 != 0) or year % 400 == 0:
                 days = 29  # is leap year
             else:
                 days = 28
