@@ -63,6 +63,30 @@ class TestCase(unittest.TestCase):
         expected = "02-28-2100"
         self.assertEqual(task.my_datetime(s), expected)
 
+    def test_11_function_2(self):
+        """Test year 2000 leap year"""
+        s = 951782400  # 2000-02-29
+        expected = "02-29-2000"
+        self.assertEqual(task.my_datetime(s), expected)
+
+    def test_12_function_2(self):
+        """Test transition between months with different lengths"""
+        # January 31 to February 1, 1970
+        s_jan31 = 2678399  # 1970-01-31 23:59:59
+        self.assertEqual(task.my_datetime(s_jan31), "01-31-1970")
+
+        s_feb1 = 2678400  # 1970-02-01 00:00:00
+        self.assertEqual(task.my_datetime(s_feb1), "02-01-1970")
+
+    def test_13_function_2(self):
+        """Test transition from December 31 to January 1"""
+        # December 31, 1970 to January 1, 1971
+        s_dec31 = 31535999  # 1970-12-31 23:59:59
+        self.assertEqual(task.my_datetime(s_dec31), "12-31-1970")
+
+        s_jan1 = 31536000  # 1971-01-01 00:00:00
+        self.assertEqual(task.my_datetime(s_jan1), "01-01-1971")
+
 
 if __name__ == "__main__":
     unittest.main()
