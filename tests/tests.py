@@ -1,6 +1,7 @@
 import unittest
 import task
 
+
 class TestCase(unittest.TestCase):
     # Black-box testing
     def test_integers(self):
@@ -8,28 +9,28 @@ class TestCase(unittest.TestCase):
         self.assertEqual(task.conv_num('0'), 0)
         self.assertEqual(task.conv_num('123'), 123)
         self.assertEqual(task.conv_num('9999'), 9999)
-        
+
         # Testing negative integers
         self.assertEqual(task.conv_num('-1'), -1)
         self.assertEqual(task.conv_num('-456'), -456)
-    
+
     def test_floating_point(self):
         # Testing standard format
         self.assertEqual(task.conv_num('123.45'), 123.45)
         self.assertEqual(task.conv_num('-123.45'), -123.45)
-        
+
         # Testing leading decimal point
         self.assertEqual(task.conv_num('.45'), 0.45)
         self.assertEqual(task.conv_num('-.45'), -0.45)
-        
+
         # Testing trailing decimal point
         self.assertEqual(task.conv_num('123.'), 123.0)
         self.assertEqual(task.conv_num('-123.'), -123.0)
-        
+
         # Testing zero values
         self.assertEqual(task.conv_num('0.0'), 0.0)
         self.assertEqual(task.conv_num('-0.0'), -0.0)
-    
+
     def test_hexadecimal(self):
         # Testing basic hex
         self.assertEqual(task.conv_num('0x0'), 0)
@@ -89,11 +90,12 @@ class TestCase(unittest.TestCase):
         self.assertEqual(task.conv_num('0xAD4'), 2772)
         self.assertEqual(task.conv_num('0Xad4'), 2772)
         self.assertEqual(task.conv_num('-0xAD4'), -2772)
-        
+
         # Additional edge cases
         self.assertEqual(task.conv_num('0'), 0)
         self.assertEqual(task.conv_num('-0'), 0)
         self.assertEqual(task.conv_num('0.0'), 0.0)
+
 
 if __name__ == '__main__':
     unittest.main()
