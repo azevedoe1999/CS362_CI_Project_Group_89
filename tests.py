@@ -2,8 +2,8 @@ import unittest
 import task
 
 
-class TestCase(unittest.TestCase):
-    """Test Cases for Function 2 (conv_num)"""
+class TestCaseFunction1(unittest.TestCase):
+    """Test Cases for Function 1 (conv_num)"""
 
     # Black-box testing
     def test_function1_integers(self):
@@ -81,6 +81,93 @@ class TestCase(unittest.TestCase):
         self.assertIsNone(task.conv_num(''))
         self.assertIsNone(task.conv_num(None))
         self.assertIsNone(task.conv_num(123))
+
+        # Attempting to parse a hex number with a decimal part
+        self.assertIsNone(task.conv_num('0xFF.02'))
+        self.assertIsNone(task.conv_num('-0x1F.4'))
+        self.assertIsNone(task.conv_num('-0xFF.02'))
+        self.assertIsNone(task.conv_num('0x.FF'))
+
+        # Just "0x" with no digits
+        self.assertIsNone(task.conv_num('0x'))
+        self.assertIsNone(task.conv_num('-0x'))
+
+        self.assertIsNone(task.conv_num(" 123"))
+        self.assertIsNone(task.conv_num("123 "))
+
+    def test_function1_large_numbers(self):
+        """Test conversion of very large numbers to ensure correct handling of edge cases near integer limits."""
+        # Very large numbers
+        self.assertEqual(task.conv_num('9223372036854775807'),
+                         9223372036854775807)  # Max 64-bit signed int
+        self.assertEqual(task.conv_num('0xFFFFFFFFFFFFFFFF'),
+                         18446744073709551615)  # Max 64-bit unsigned int
+
+    def test_function1_edge_hex_cases(self):
+        """Test edge cases for hexadecimal conversion including zero, negative zero, and padded numbers."""
+        # Edge cases for hexadecimal
+        self.assertEqual(task.conv_num('0x0'), 0)
+        self.assertEqual(task.conv_num('-0x0'), 0)
+        self.assertEqual(task.conv_num('0x000001'), 1)
+
+    def test_function1_leading_zeros(self):
+        """Test that numbers with leading zeros are correctly converted to their proper value."""
+        # Numbers with leading zeros
+        self.assertEqual(task.conv_num('00123'), 123)
+        self.assertEqual(task.conv_num('000.123'), 0.123)
+        self.assertEqual(task.conv_num('-00123'), -123)
+
+    def test_function1_mixed_format_validation(self):
+        """Test that invalid mixed formats are properly rejected and return None."""
+        self.assertIsNone(task.conv_num('123-456')
+                          )  # Invalid: digits with embedded dash
+        # Invalid: digits with embedded plus
+        self.assertIsNone(task.conv_num('123+456'))
+        # Invalid: dash after prefix
+        self.assertIsNone(task.conv_num('0x-123'))
+        self.assertIsNone(task.conv_num('0x123-'))   # Invalid: trailing dash
+
+    def test_function1_incomplete_hex_prefix(self):
+        """Test incomplete hexadecimal prefixes"""
+        self.assertIsNone(task.conv_num('0x'))     # Only prefix, no hex digits
+        # Negative sign with only prefix
+        self.assertIsNone(task.conv_num('-0x'))
+        # Just zero (valid decimal, not hex)
+        self.assertIsNone(task.conv_num('0'))
+        self.assertIsNone(task.conv_num('x123'))   # Missing '0' in prefix
+        self.assertIsNone(task.conv_num('0X'))     # Only prefix with capital X
+
+    def test_function1_whitespace_handling(self):
+        """Test strings with whitespace"""
+        # Leading whitespace
+        self.assertIsNone(task.conv_num(' 123'))    # Leading space
+        self.assertIsNone(task.conv_num('\t123'))   # Leading tab
+        self.assertIsNone(task.conv_num('\n123'))   # Leading newline
+
+        # Trailing whitespace
+        self.assertIsNone(task.conv_num('123 '))    # Trailing space
+        self.assertIsNone(task.conv_num('123\t'))   # Trailing tab
+        self.assertIsNone(task.conv_num('123\n'))   # Trailing newline
+
+        # Whitespace around hex prefixes
+        self.assertIsNone(task.conv_num(' 0x123'))  # Space before hex
+        self.assertIsNone(task.conv_num('0x123 '))  # Space after hex
+
+        # Whitespace in the middle
+        # Space in the middle of decimal
+        self.assertIsNone(task.conv_num('12 34'))
+        # Space in the middle of hex
+        self.assertIsNone(task.conv_num('0x12 34'))
+        self.assertIsNone(task.conv_num('12.3 4'))  # Space after decimal point
+
+    def test_function1_mixed_whitespace_and_prefix(self):
+        """Test combinations of whitespace and prefix issues"""
+        self.assertIsNone(task.conv_num('0 x123'))  # Space between '0' and 'x'
+        # Space between '-0' and 'x'
+        self.assertIsNone(task.conv_num('-0 x123'))
+        # Space between '-' and '0x'
+        self.assertIsNone(task.conv_num('- 0x123'))
+        self.assertIsNone(task.conv_num('0x 123'))  # Space after prefix
 
     # Regression tests
     def test_function1_regression_cases(self):
@@ -187,6 +274,31 @@ class TestCaseFunction2(unittest.TestCase):
         s_jan1 = 31536000  # 1971-01-01 00:00:00
         self.assertEqual(task.my_datetime(s_jan1), "01-01-1971")
 
+    def test_14_function_2_day_boundary(self):
+        """
+        Tests that 23:59:59 on Jan 1, 1970 still returns 01-01-1970
+        and doesn't roll over to 01-02-1970 by mistake.
+        """
+        s = 86399  # 23:59:59 on 1970-01-01
+        expected = "01-01-1970"
+        self.assertEqual(task.my_datetime(s), expected)
+
+    def test_15_function_2(self):
+        """Test with very large number of seconds (far future)"""
+        s = 9999999999999  # Over 300 million years from epoch
+        expected = "11-16-316887308"
+        self.assertEqual(task.my_datetime(s), expected)
+
+    def test_16_function_2(self):
+        """Test with seconds that are exactly at month boundaries"""
+        # Test exactly at March 1st in non-leap year
+        s = 36720000  # 1971-03-01 00:00:00
+        self.assertEqual(task.my_datetime(s), "03-01-1971")
+
+        # Test exactly at March 1st in leap year
+        s = 68256000  # 1972-03-01 00:00:00
+        self.assertEqual(task.my_datetime(s), "03-01-1972")
+
 
 class TestCaseFunction3(unittest.TestCase):
     """Test Cases for Function 3 (conv_endian)"""
@@ -273,6 +385,32 @@ class TestCaseFunction3(unittest.TestCase):
         """Tests 3-byte values with specific spacing requirements"""
         self.assertEqual(task.conv_endian(1118481), "11 11 11")
         self.assertEqual(task.conv_endian(1118481, "little"), "11 11 11")
+
+    def test_15_function_3(self):
+        """Tests with larger numbers to verify byte splitting"""
+        # A 4-byte integer
+        self.assertEqual(task.conv_endian(16777216), "01 00 00 00")
+        self.assertEqual(task.conv_endian(16777216, "little"), "00 00 00 01")
+
+        # A 5-byte integer
+        self.assertEqual(task.conv_endian(4294967296), "01 00 00 00 00")
+        self.assertEqual(task.conv_endian(
+            4294967296, "little"), "00 00 00 00 01")
+
+    def test_16_function_3(self):
+        """Tests with non-standard sizes that could expose padding issues"""
+        # This tests correct handling of a number that would produce '0A 0B 0C'
+        self.assertEqual(task.conv_endian(658188), "0A 0B 0C")
+        self.assertEqual(task.conv_endian(658188, "little"), "0C 0B 0A")
+
+        # Test with a value that's on the boundary between byte sizes
+        self.assertEqual(task.conv_endian(256), "01 00")
+        self.assertEqual(task.conv_endian(256, "little"), "00 01")
+
+    def test_17_function_3(self):
+        """Test with negative zero-edge case"""
+        self.assertEqual(task.conv_endian(-0),
+                         "0")  # Should be treated as positive zero
 
 
 if __name__ == "__main__":
