@@ -37,6 +37,10 @@ def convert_hex(hex_str):
     # Trim 0x prefix
     hex_digits = hex_str[2:]
 
+    # Check if there are any digits left after trimming
+    if not hex_digits:
+        return None
+
     # Check if all characters are valid
     valid_hex = "0123456789abcdef"
     for digit in hex_digits:
@@ -86,7 +90,9 @@ def convert_decimal(dec_str):
     Returns:
         int or float: The decimal value, or None if invalid format
     """
-    is_float = False  # Flag for float number
+    # Special cases check
+    if dec_str == '.' or dec_str == '-.':
+        return None
 
     # Find if decimal number is negative
     is_negative = False
@@ -94,45 +100,57 @@ def convert_decimal(dec_str):
         is_negative = True
         dec_str = dec_str[1:]  # Trim negative sign
 
-    # Normalize cases like .45
+    # Check for empty string after removing negative sign
+    if not dec_str:
+        return None
+
+    # Normalize decimal point positions
     if dec_str.startswith('.'):
         dec_str = '0' + dec_str
-
-    # Normalize cases like 123.
     if dec_str.endswith('.'):
         dec_str = dec_str + '0'
 
-    # Check if all characters are valid
+    # Validate and process decimal string
+    return process_decimal_string(dec_str, is_negative)
+
+
+def process_decimal_string(dec_str, is_negative):
+    """
+    Helper function to process and validate decimal string.
+    Args:
+        dec_str (str): Decimal string to process
+        is_negative (bool): Whether the number is negative
+    Returns:
+        int or float: The decimal value, or None if invalid format
+    """
+    is_float = False
     valid_dec = "0123456789"
     float_count = 0
+
+    # Validate all characters
     for digit in dec_str:
         if digit not in valid_dec:
             if digit == '.' and float_count < 1:
                 is_float = True
-                float_count = float_count + 1
+                float_count += 1
             else:
                 return None
 
-    result = 0
+    # Convert to number
     if is_float:
-        # Since it is float, split into two
         splits = dec_str.split('.')
-
         int_value = str_to_int(splits[0])
-
         frac_value = str_to_int(splits[1])
 
-        # Normalize frac part
+        # Normalize fractional part
         frac_value = frac_value / (10 ** len(splits[1]))
-
         result = int_value + frac_value
-        if is_negative:
-            result = -result
     else:
         result = str_to_int(dec_str)
 
-        if is_negative:
-            result = -result
+    # Apply negative sign if needed
+    if is_negative:
+        result = -result
 
     return result
 
@@ -140,8 +158,10 @@ def convert_decimal(dec_str):
 # function 2
 def my_datetime(num_sec):
     """
-    This function takes in an integer value that represents the number of seconds since the epoch: January 1st, 1970.
-    The function takes num_sec and converts it to a date and returns it as a string with the following format: MM-DD-YYYY.
+    This function takes in an integer value that represents
+    the number of seconds since the epoch: January 1st, 1970.
+    The function takes num_sec and converts it to a date and
+    returns it as a string with the following format: MM-DD-YYYY.
     It has the following specifications:
         It may be assumed that num_sec will always be an int value
         It may be assumed that num_sec will always be a non-negative value
@@ -214,16 +234,21 @@ def check_for_leap_year(year):
 # function 3
 def conv_endian(num, endian="big"):
     """
-    This function must have the following header: def conv_endian(num, endian='big').
-    This function takes in an integer value as num and converts it to a hexadecimal number.
+    This function must have the following header:
+    def conv_endian(num, endian='big').
+    This function takes in an integer value as num and
+    converts it to a hexadecimal number.
     The endian type is determined by the flag endian.
     The function will return the converted number as a string.
     It has the following specifications:
         It may be assumed that num will always be an integer
         Must be able to handle negative values for num
-        A value of big for endian will return a hexadecimal number that is big-endian
-        A value of little for endian will return a hexadecimal number that is little-endian
-        Any other values of endian will return None (n.b. this is not a string, but the actual None value)
+        A value of big for endian will return a hexadecimal number
+        that is big-endian
+        A value of little for endian will return a hexadecimal number
+        that is little-endian
+        Any other values of endian will return None (n.b. this is not a string,
+        but the actual None value)
         The returned string will have each byte separated by a space
         Each byte must be two characters in length
     """
