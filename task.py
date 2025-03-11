@@ -131,7 +131,4 @@ def conv_endian(num, endian="big"):
         hex_num = " ".join(hex_num)
 
     # add back negative sign if num was negative
-    if NEGATIVE:
-        hex_num = "-" + hex_num
-
-    return hex_num
+    return f"{'-' if is_negative else ''}{hex_num}"
