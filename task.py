@@ -130,7 +130,7 @@ def convert_decimal(dec_str):
         result = str_to_int(dec_str)
 
         if is_negative:
-            result = -int_value
+            result = -result
 
     return result
 
