@@ -96,7 +96,7 @@ def conv_endian(num, endian="big"):
     # if num is negative --> make num a postive so we can convert it
     # will add negative sign at end
     if num < 0:
-        NEGATIVE = True
+        is_negative = True
         num = abs(num)
 
     # check if endian is vaild --> if not, return None
