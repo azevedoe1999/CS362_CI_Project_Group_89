@@ -1,7 +1,11 @@
 # function 1
 def conv_num(num_str):
     """
-    This function
+    This function converts a string to a base 10 number.
+    Args:
+        num_str (str): The string to convert
+    Returns:
+        int or float: The converted number, or None incase invalid format
     """
     # Check if input is valid
     if not isinstance(num_str, str) or num_str == '':
@@ -16,11 +20,25 @@ def conv_num(num_str):
 
 # helper function for function 1 to convert hex
 def convert_hex(hex_str):
+    """
+    Converts a hexadecimal string to a decimal integer.
+    Args:
+        hex_str (str): The hexadecimal string to convert
+    Returns:
+        int: The decimal value, or None if invalid format
+    """
     return
 
 
 # helper function for function 1 to convert decim
 def convert_decimal(hex_str):
+    """
+    Converts a decimal string to a number.
+    Args:
+        dec_str (str): The decimal string to convert
+    Returns:
+        int or float: The decimal value, or None if invalid format
+    """
     return
 
 
