@@ -111,7 +111,7 @@ def convert_decimal(dec_str):
             else:
                 return None
 
-    result = None
+    result = 0
     if is_float:
         # Since it is float, split into two
         splits = dec_str.split('.')
