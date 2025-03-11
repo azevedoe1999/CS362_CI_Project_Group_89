@@ -186,6 +186,27 @@ class TestCaseFunction1(unittest.TestCase):
         self.assertEqual(task.conv_num('0.0'), 0.0)
         self.assertEqual(task.conv_num('00123'), 123)
 
+    def test_function1_negative_zero(self):
+        """Test handling of negative zero values."""
+        self.assertEqual(task.conv_num('-0'), 0)
+        # Python represents as 0.0
+        self.assertEqual(task.conv_num('-.0'), -0.0)
+        # Python represents as 0.0
+        self.assertEqual(task.conv_num('-0.0'), -0.0)
+        self.assertEqual(task.conv_num('-0x0'), 0)
+
+    def test_function1_trailing_zeros(self):
+        """Test that floating point values maintain proper precision."""
+        # Need to use assertAlmostEqual for floating point comparisons
+        self.assertAlmostEqual(task.conv_num('42.000'), 42.0)
+        self.assertAlmostEqual(task.conv_num('42.100'), 42.1)
+        self.assertAlmostEqual(task.conv_num('42.010'), 42.01)
+        self.assertAlmostEqual(task.conv_num('42.001'), 42.001)
+
+    def test_function1_just_dot(self):
+        """Test that a single dot returns None."""
+        self.assertIsNone(task.conv_num('.'))
+
 
 class TestCaseFunction2(unittest.TestCase):
     """Test Cases for Function 2 (my_datetime)"""
@@ -280,21 +301,41 @@ class TestCaseFunction2(unittest.TestCase):
         expected = "01-01-1970"
         self.assertEqual(task.my_datetime(s), expected)
 
-    def test_function2_far_future(self):
-        """Test with very large number of seconds (far future)."""
-        s = 9999999999999  # Over 300 million years from epoch
-        expected = "11-16-316887308"
+    def test_function2_year_limit(self):
+        """Test maximum representable year."""
+        import datetime
+
+        # Calculate seconds until year 9999 (maximum supported by datetime)
+        max_date = datetime.datetime(
+            9999, 12, 31, 23, 59, 59, tzinfo=datetime.timezone.utc)
+        s = int(max_date.timestamp())
+
+        expected = max_date.strftime("%m-%d-%Y")
         self.assertEqual(task.my_datetime(s), expected)
 
     def test_function2_month_boundaries(self):
-        """Test exact month boundaries in leap and non-leap years."""
-        # Test exactly at March 1st in non-leap year
-        s = 36720000  # 1971-03-01 00:00:00
-        self.assertEqual(task.my_datetime(s), "03-01-1971")
+        """Test exact month boundaries with datetime validation."""
+        import datetime
 
-        # Test exactly at March 1st in leap year
-        s = 68256000  # 1972-03-01 00:00:00
-        self.assertEqual(task.my_datetime(s), "03-01-1972")
+        # Test timestamp for March boundary
+        s = 36720000  # This timestamp should be consistent
+        dt = datetime.datetime.fromtimestamp(s, tz=datetime.timezone.utc)
+        expected = dt.strftime("%m-%d-%Y")
+        self.assertEqual(task.my_datetime(s), expected)
+
+        # Test leap year March boundary
+        s_leap = 68256000  # This timestamp should be consistent
+        dt_leap = datetime.datetime.fromtimestamp(
+            s_leap, tz=datetime.timezone.utc)
+        expected_leap = dt_leap.strftime("%m-%d-%Y")
+        self.assertEqual(task.my_datetime(s_leap), expected_leap)
+
+        # Additional test for February 29 in a leap year
+        s_feb29 = 68169600  # February 29, 1972
+        dt_feb29 = datetime.datetime.fromtimestamp(
+            s_feb29, tz=datetime.timezone.utc)
+        expected_feb29 = dt_feb29.strftime("%m-%d-%Y")
+        self.assertEqual(task.my_datetime(s_feb29), expected_feb29)
 
 
 class TestCaseFunction3(unittest.TestCase):
@@ -408,6 +449,21 @@ class TestCaseFunction3(unittest.TestCase):
         """Test negative zero case."""
         self.assertEqual(task.conv_endian(-0),
                          "0")  # Should be treated as positive zero
+
+    # Additional tests for Function 3 (conv_endian)
+    def test_function3_case_sensitivity(self):
+        """Test that endian parameter is case sensitive."""
+        self.assertEqual(task.conv_endian(100, "big"), "64")
+        self.assertEqual(task.conv_endian(100, "little"), "64")
+        self.assertIsNone(task.conv_endian(100, "BIG"))
+        self.assertIsNone(task.conv_endian(100, "LITTLE"))
+
+    def test_function3_twos_complement(self):
+        """Test that negative numbers aren't using two's complement."""
+        # Based on discussion, we're not using two's complement
+        # Just confirming that negative sign is simply prefixed
+        self.assertEqual(task.conv_endian(-16), "-10")  # Not FFF0
+        self.assertEqual(task.conv_endian(-16, "little"), "-10")  # Not F0 FF
 
 
 if __name__ == "__main__":

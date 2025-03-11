@@ -37,6 +37,10 @@ def convert_hex(hex_str):
     # Trim 0x prefix
     hex_digits = hex_str[2:]
 
+    # Check if there are any digits left after trimming
+    if not hex_digits:
+        return None
+
     # Check if all characters are valid
     valid_hex = "0123456789abcdef"
     for digit in hex_digits:
@@ -88,11 +92,19 @@ def convert_decimal(dec_str):
     """
     is_float = False  # Flag for float number
 
+    # Handle the case of a single dot
+    if dec_str == '.':
+        return None
+
     # Find if decimal number is negative
     is_negative = False
     if dec_str.startswith('-'):
         is_negative = True
         dec_str = dec_str[1:]  # Trim negative sign
+
+        # Handle the case of a single dot with negative sign
+        if dec_str == '.':
+            return None
 
     # Normalize cases like .45
     if dec_str.startswith('.'):
@@ -140,8 +152,10 @@ def convert_decimal(dec_str):
 # function 2
 def my_datetime(num_sec):
     """
-    This function takes in an integer value that represents the number of seconds since the epoch: January 1st, 1970.
-    The function takes num_sec and converts it to a date and returns it as a string with the following format: MM-DD-YYYY.
+    This function takes in an integer value that represents
+    the number of seconds since the epoch: January 1st, 1970.
+    The function takes num_sec and converts it to a date and
+    returns it as a string with the following format: MM-DD-YYYY.
     It has the following specifications:
         It may be assumed that num_sec will always be an int value
         It may be assumed that num_sec will always be a non-negative value
@@ -214,16 +228,21 @@ def check_for_leap_year(year):
 # function 3
 def conv_endian(num, endian="big"):
     """
-    This function must have the following header: def conv_endian(num, endian='big').
-    This function takes in an integer value as num and converts it to a hexadecimal number.
+    This function must have the following header:
+    def conv_endian(num, endian='big').
+    This function takes in an integer value as num and
+    converts it to a hexadecimal number.
     The endian type is determined by the flag endian.
     The function will return the converted number as a string.
     It has the following specifications:
         It may be assumed that num will always be an integer
         Must be able to handle negative values for num
-        A value of big for endian will return a hexadecimal number that is big-endian
-        A value of little for endian will return a hexadecimal number that is little-endian
-        Any other values of endian will return None (n.b. this is not a string, but the actual None value)
+        A value of big for endian will return a hexadecimal number
+        that is big-endian
+        A value of little for endian will return a hexadecimal number
+        that is little-endian
+        Any other values of endian will return None (n.b. this is not a string,
+        but the actual None value)
         The returned string will have each byte separated by a space
         Each byte must be two characters in length
     """
