@@ -107,8 +107,7 @@ def conv_endian(num, endian="big"):
 
     # if num is 0, return 0
     if num == 0:
-        hex_num = "0"
-        return hex_num
+        return "0"
 
     # convert num to hex and assign it to hex_num
     while num > 0:
