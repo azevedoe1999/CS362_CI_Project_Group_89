@@ -163,5 +163,14 @@ class TestCaseFunction3(unittest.TestCase):
         self.assertEqual(task.conv_endian(100, None), None)
 
 
+def test_13_function_3(self):
+    """Checks values that would produce odd hex digit counts"""
+    self.assertEqual(task.conv_endian(266), "01 0A")  # 10A - needs padding and spacing
+    self.assertEqual(task.conv_endian(4111), "10 0F")  # 100F - tests spacing mid-number
+    
+def test_14_function_3(self):
+    """Tests 3-byte values with specific spacing requirements"""
+    self.assertEqual(task.conv_endian(1118481), "11 11 01")
+    self.assertEqual(task.conv_endian(1118481, "little"), "01 11 11")
 if __name__ == "__main__":
     unittest.main()
