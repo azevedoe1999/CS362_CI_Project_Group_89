@@ -1,3 +1,11 @@
+# function 1
+def conv_num(num_str):
+    """
+    This function
+    """
+    return
+
+
 # function 2
 def my_datetime(num_sec):
     """
