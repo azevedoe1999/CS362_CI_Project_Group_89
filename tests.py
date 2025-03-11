@@ -3,7 +3,8 @@ import task
 
 
 class TestCase(unittest.TestCase):
-    # Function1 Tests
+    """Test Cases for Function 2 (conv_num)"""
+
     # Black-box testing
     def test_function1_integers(self):
         # Testing positive integers
@@ -97,7 +98,10 @@ class TestCase(unittest.TestCase):
         self.assertEqual(task.conv_num('-0'), 0)
         self.assertEqual(task.conv_num('0.0'), 0.0)
         self.assertEqual(task.conv_num('00123'), 123)
-    # Function2 Tests
+
+
+class TestCaseFunction2(unittest.TestCase):
+    """Test Cases for Function 2 (my_datetime)"""
 
     def test_1_function_2(self):
         """From examples"""
@@ -182,6 +186,93 @@ class TestCase(unittest.TestCase):
 
         s_jan1 = 31536000  # 1971-01-01 00:00:00
         self.assertEqual(task.my_datetime(s_jan1), "01-01-1971")
+
+
+class TestCaseFunction3(unittest.TestCase):
+    """Test Cases for Function 3 (conv_endian)"""
+
+    def test_1_function_3(self):
+        """From example"""
+        num = 954786
+        endian = "big"
+        expected = "0E 91 A2"
+        self.assertEqual(task.conv_endian(num, endian), expected)
+
+    def test_2_function_3(self):
+        """From example"""
+        num = 954786
+        expected = "0E 91 A2"
+        self.assertEqual(task.conv_endian(num), expected)
+
+    def test_3_function_3(self):
+        """From example"""
+        num = -954786
+        expected = "-0E 91 A2"
+        self.assertEqual(task.conv_endian(num), expected)
+
+    def test_4_function_3(self):
+        """From example"""
+        num = 954786
+        endian = "little"
+        expected = "A2 91 0E"
+        self.assertEqual(task.conv_endian(num, endian), expected)
+
+    def test_5_function_3(self):
+        """From example"""
+        num = -954786
+        endian = "little"
+        expected = "-A2 91 0E"
+        self.assertEqual(task.conv_endian(num, endian), expected)
+
+    def test_6_function_3(self):
+        """From example"""
+        num = -954786
+        endian = "small"
+        expected = None
+        self.assertEqual(task.conv_endian(num, endian), expected)
+
+    def test_7_function_3(self):
+        """If num is 0"""
+        num = 0
+        expected = "0"
+        self.assertEqual(task.conv_endian(num), expected)
+
+    def test_8_function_3(self):
+        """Checks smallest 1-byte"""
+        self.assertEqual(task.conv_endian(15), "0F")
+        self.assertEqual(task.conv_endian(15, "little"), "0F")
+
+    def test_9_function_3(self):
+        """Checks smallest 2-byte"""
+        self.assertEqual(task.conv_endian(255), "FF")
+        self.assertEqual(task.conv_endian(255, "little"), "FF")
+
+    def test_10_function_3(self):
+        """Checks largest 2-byte number"""
+        self.assertEqual(task.conv_endian(65535), "FF FF")
+        self.assertEqual(task.conv_endian(65535, "little"), "FF FF")
+
+    def test_11_function_3(self):
+        """Checks negative single-byte"""
+        self.assertEqual(task.conv_endian(-255), "-FF")
+        self.assertEqual(task.conv_endian(-255, "little"), "-FF")
+
+    def test_12_function_3(self):
+        """Checks for invalid endian"""
+        self.assertEqual(task.conv_endian(100, ""), None)
+        self.assertEqual(task.conv_endian(100, None), None)
+
+    def test_13_function_3(self):
+        """Checks values that would produce odd hex digit counts"""
+        # 10A - needs padding and spacing
+        self.assertEqual(task.conv_endian(266), "01 0A")
+        # 100F - tests spacing mid-number
+        self.assertEqual(task.conv_endian(4111), "10 0F")
+
+    def test_14_function_3(self):
+        """Tests 3-byte values with specific spacing requirements"""
+        self.assertEqual(task.conv_endian(1118481), "11 11 11")
+        self.assertEqual(task.conv_endian(1118481, "little"), "11 11 11")
 
 
 if __name__ == "__main__":

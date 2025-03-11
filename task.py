@@ -209,3 +209,65 @@ def check_for_leap_year(year):
         return True
 
     return False
+
+
+# function 3
+def conv_endian(num, endian="big"):
+    """
+    This function must have the following header: def conv_endian(num, endian='big').
+    This function takes in an integer value as num and converts it to a hexadecimal number.
+    The endian type is determined by the flag endian.
+    The function will return the converted number as a string.
+    It has the following specifications:
+        It may be assumed that num will always be an integer
+        Must be able to handle negative values for num
+        A value of big for endian will return a hexadecimal number that is big-endian
+        A value of little for endian will return a hexadecimal number that is little-endian
+        Any other values of endian will return None (n.b. this is not a string, but the actual None value)
+        The returned string will have each byte separated by a space
+        Each byte must be two characters in length
+    """
+
+    # set up variables
+    HEX_DIGITS = "0123456789ABCDEF"  # hex digits table
+    is_negative = False  # flag if nun is negative or not
+
+    # if num is negative --> make num a postive so we can convert it
+    # will add negative sign at end
+    if num < 0:
+        is_negative = True
+        num = abs(num)
+
+    # Dictionary for endian mapping
+    endian_map = {"big": False, "little": True}
+    if endian not in endian_map:
+        return None
+
+    hex_num = ""  # store hex number we get from num
+
+    # if num is 0, return 0
+    if num == 0:
+        return "0"
+
+    # convert num to hex and assign it to hex_num
+    while num > 0:
+        remainder = num % 16
+        hex_num = HEX_DIGITS[remainder] + hex_num
+        num //= 16
+
+    # pad hex_num with leading 0 if uneven
+    if len(hex_num) % 2 != 0:
+        hex_num = "0" + hex_num
+
+    # add spaces
+    chunks = [hex_num[i: i + 2] for i in range(0, len(hex_num), 2)]
+    hex_num = " ".join(chunks)
+
+    # if endian flag is little --> reverse the byte order
+    if endian_map[endian]:
+        reverse = hex_num.split()
+        hex_num = reverse[::-1]
+        hex_num = " ".join(hex_num)
+
+    # add back negative sign if num was negative
+    return f"{'-' if is_negative else ''}{hex_num}"
