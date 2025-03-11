@@ -11,9 +11,11 @@ def conv_num(num_str):
     if not isinstance(num_str, str) or num_str == '':
         return None
 
+    lower_str = num_str.lower()
+
     # Check if it's a hexadecimal number
-    if num_str.lower().startswith('0x') or num_str.lower().startswith('-0x'):
-        return convert_hex(num_str)
+    if lower_str.startswith('0x') or lower_str.startswith('-0x'):
+        return convert_hex(lower_str)
     else:
         return convert_decimal(num_str)
 
@@ -33,7 +35,7 @@ def convert_hex(hex_str):
         hex_str = hex_str[1:]  # Trim negative sign
 
     # Trim 0x prefix
-    hex_digits = hex_str[2:].lower()
+    hex_digits = hex_str[2:]
 
     # Check if all characters are valid
     valid_hex = "0123456789abcdef"
