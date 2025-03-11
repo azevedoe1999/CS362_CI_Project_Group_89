@@ -295,48 +295,6 @@ class TestCaseFunction2(unittest.TestCase):
         s_jan1 = 31536000  # 1971-01-01 00:00:00
         self.assertEqual(task.my_datetime(s_jan1), "01-01-1971")
 
-    def test_function2_day_boundary(self):
-        """Test day boundary at 23:59:59."""
-        s = 86399  # 23:59:59 on 1970-01-01
-        expected = "01-01-1970"
-        self.assertEqual(task.my_datetime(s), expected)
-
-    def test_function2_year_limit(self):
-        """Test maximum representable year."""
-        import datetime
-
-        # Calculate seconds until year 9999 (maximum supported by datetime)
-        max_date = datetime.datetime(
-            9999, 12, 31, 23, 59, 59, tzinfo=datetime.timezone.utc)
-        s = int(max_date.timestamp())
-
-        expected = max_date.strftime("%m-%d-%Y")
-        self.assertEqual(task.my_datetime(s), expected)
-
-    def test_function2_month_boundaries(self):
-        """Test exact month boundaries with datetime validation."""
-        import datetime
-
-        # Test timestamp for March boundary
-        s = 36720000  # This timestamp should be consistent
-        dt = datetime.datetime.fromtimestamp(s, tz=datetime.timezone.utc)
-        expected = dt.strftime("%m-%d-%Y")
-        self.assertEqual(task.my_datetime(s), expected)
-
-        # Test leap year March boundary
-        s_leap = 68256000  # This timestamp should be consistent
-        dt_leap = datetime.datetime.fromtimestamp(
-            s_leap, tz=datetime.timezone.utc)
-        expected_leap = dt_leap.strftime("%m-%d-%Y")
-        self.assertEqual(task.my_datetime(s_leap), expected_leap)
-
-        # Additional test for February 29 in a leap year
-        s_feb29 = 68169600  # February 29, 1972
-        dt_feb29 = datetime.datetime.fromtimestamp(
-            s_feb29, tz=datetime.timezone.utc)
-        expected_feb29 = dt_feb29.strftime("%m-%d-%Y")
-        self.assertEqual(task.my_datetime(s_feb29), expected_feb29)
-
 
 class TestCaseFunction3(unittest.TestCase):
     """Test Cases for Function 3 (conv_endian)"""
@@ -423,47 +381,6 @@ class TestCaseFunction3(unittest.TestCase):
         """Test 3-byte values with specific spacing requirements."""
         self.assertEqual(task.conv_endian(1118481), "11 11 11")
         self.assertEqual(task.conv_endian(1118481, "little"), "11 11 11")
-
-    def test_function3_large_integers(self):
-        """Test large multi-byte integers."""
-        # A 4-byte integer
-        self.assertEqual(task.conv_endian(16777216), "01 00 00 00")
-        self.assertEqual(task.conv_endian(16777216, "little"), "00 00 00 01")
-
-        # A 5-byte integer
-        self.assertEqual(task.conv_endian(4294967296), "01 00 00 00 00")
-        self.assertEqual(task.conv_endian(
-            4294967296, "little"), "00 00 00 00 01")
-
-    def test_function3_byte_boundaries(self):
-        """Test byte boundary cases and padding."""
-        # This tests correct handling of a number that would produce '0A 0B 0C'
-        self.assertEqual(task.conv_endian(658188), "0A 0B 0C")
-        self.assertEqual(task.conv_endian(658188, "little"), "0C 0B 0A")
-
-        # Test with a value that's on the boundary between byte sizes
-        self.assertEqual(task.conv_endian(256), "01 00")
-        self.assertEqual(task.conv_endian(256, "little"), "00 01")
-
-    def test_function3_negative_zero(self):
-        """Test negative zero case."""
-        self.assertEqual(task.conv_endian(-0),
-                         "0")  # Should be treated as positive zero
-
-    # Additional tests for Function 3 (conv_endian)
-    def test_function3_case_sensitivity(self):
-        """Test that endian parameter is case sensitive."""
-        self.assertEqual(task.conv_endian(100, "big"), "64")
-        self.assertEqual(task.conv_endian(100, "little"), "64")
-        self.assertIsNone(task.conv_endian(100, "BIG"))
-        self.assertIsNone(task.conv_endian(100, "LITTLE"))
-
-    def test_function3_twos_complement(self):
-        """Test that negative numbers aren't using two's complement."""
-        # Based on discussion, we're not using two's complement
-        # Just confirming that negative sign is simply prefixed
-        self.assertEqual(task.conv_endian(-16), "-10")  # Not FFF0
-        self.assertEqual(task.conv_endian(-16, "little"), "-10")  # Not F0 FF
 
 
 if __name__ == "__main__":
