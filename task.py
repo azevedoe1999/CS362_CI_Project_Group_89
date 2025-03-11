@@ -1,3 +1,142 @@
+# function 1
+def conv_num(num_str):
+    """
+    This function converts a string to a base 10 number.
+    Args:
+        num_str (str): The string to convert
+    Returns:
+        int or float: The converted number, or None incase invalid format
+    """
+    # Check if input is valid
+    if not isinstance(num_str, str) or num_str == '':
+        return None
+
+    lower_str = num_str.lower()
+
+    # Check if it's a hexadecimal number
+    if lower_str.startswith('0x') or lower_str.startswith('-0x'):
+        return convert_hex(lower_str)
+    else:
+        return convert_decimal(num_str)
+
+
+def convert_hex(hex_str):
+    """
+    Converts a hexadecimal string to a decimal integer.
+    Args:
+        hex_str (str): The hexadecimal string to convert
+    Returns:
+        int: The decimal value, or None if invalid format
+    """
+    # Find if hex number is negative
+    is_negative = False
+    if hex_str.startswith('-'):
+        is_negative = True
+        hex_str = hex_str[1:]  # Trim negative sign
+
+    # Trim 0x prefix
+    hex_digits = hex_str[2:]
+
+    # Check if all characters are valid
+    valid_hex = "0123456789abcdef"
+    for digit in hex_digits:
+        if digit not in valid_hex:
+            return None
+
+    # Conversion
+    decimal_value = 0
+    for digit in hex_digits:
+        # Convert each hex digit to its decimal value
+        if digit in "0123456789":
+            digit_value = ord(digit) - ord('0')
+        else:
+            digit_value = ord(digit) - ord('a') + 10
+
+        decimal_value = decimal_value * 16 + digit_value
+
+    # Negate if needed
+    if is_negative:
+        decimal_value = -decimal_value
+
+    return decimal_value
+
+
+def str_to_int(digit_str):
+    """
+    Helper function to convert a string of digits to an integer.
+
+    Args:
+        digit_str (str): String containing only digits
+
+    Returns:
+        int: The integer value
+    """
+    int_value = 0
+    for digit in digit_str:
+        digit_value = ord(digit) - ord('0')
+        int_value = int_value * 10 + digit_value
+    return int_value
+
+
+def convert_decimal(dec_str):
+    """
+    Converts a decimal string to a number.
+    Args:
+        dec_str (str): The decimal string to convert
+    Returns:
+        int or float: The decimal value, or None if invalid format
+    """
+    is_float = False  # Flag for float number
+
+    # Find if decimal number is negative
+    is_negative = False
+    if dec_str.startswith('-'):
+        is_negative = True
+        dec_str = dec_str[1:]  # Trim negative sign
+
+    # Normalize cases like .45
+    if dec_str.startswith('.'):
+        dec_str = '0' + dec_str
+
+    # Normalize cases like 123.
+    if dec_str.endswith('.'):
+        dec_str = dec_str + '0'
+
+    # Check if all characters are valid
+    valid_dec = "0123456789"
+    float_count = 0
+    for digit in dec_str:
+        if digit not in valid_dec:
+            if digit == '.' and float_count < 1:
+                is_float = True
+                float_count = float_count + 1
+            else:
+                return None
+
+    result = 0
+    if is_float:
+        # Since it is float, split into two
+        splits = dec_str.split('.')
+
+        int_value = str_to_int(splits[0])
+
+        frac_value = str_to_int(splits[1])
+
+        # Normalize frac part
+        frac_value = frac_value / (10 ** len(splits[1]))
+
+        result = int_value + frac_value
+        if is_negative:
+            result = -result
+    else:
+        result = str_to_int(dec_str)
+
+        if is_negative:
+            result = -result
+
+    return result
+
+
 # function 2
 def my_datetime(num_sec):
     """
