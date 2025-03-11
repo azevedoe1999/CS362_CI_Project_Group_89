@@ -98,6 +98,7 @@ class TestCase(unittest.TestCase):
         self.assertEqual(task.conv_num('0.0'), 0.0)
         self.assertEqual(task.conv_num('00123'), 123)
     # Function2 Tests
+
     def test_1_function_2(self):
         """From examples"""
         s = 0  # input
