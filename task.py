@@ -121,15 +121,8 @@ def conv_endian(num, endian="big"):
         hex_num = "0" + hex_num
 
     # add spaces
-    add_spaces = ""
-    for i in range(len(hex_num)):
-        if i > 0 and i % 2 == 0:
-            add_spaces += " "
-            add_spaces += hex_num[i]
-        else:
-            add_spaces += hex_num[i]
-
-    hex_num = add_spaces
+    chunks = [hex_num[i:i+2] for i in range(0, len(hex_num), 2)]
+    hex_num = " ".join(chunks)
 
     # if endian flag is little --> reverse the byte order
     if endian == "little":
