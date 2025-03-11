@@ -90,10 +90,8 @@ def convert_decimal(dec_str):
     Returns:
         int or float: The decimal value, or None if invalid format
     """
-    is_float = False  # Flag for float number
-
-    # Handle the case of a single dot
-    if dec_str == '.':
+    # Special cases check
+    if dec_str == '.' or dec_str == '-.':
         return None
 
     # Find if decimal number is negative
@@ -102,49 +100,57 @@ def convert_decimal(dec_str):
         is_negative = True
         dec_str = dec_str[1:]  # Trim negative sign
 
-        # Handle the case of a single dot with negative sign
-        if dec_str == '.':
-            return None
+    # Check for empty string after removing negative sign
+    if not dec_str:
+        return None
 
-    # Normalize cases like .45
+    # Normalize decimal point positions
     if dec_str.startswith('.'):
         dec_str = '0' + dec_str
-
-    # Normalize cases like 123.
     if dec_str.endswith('.'):
         dec_str = dec_str + '0'
 
-    # Check if all characters are valid
+    # Validate and process decimal string
+    return process_decimal_string(dec_str, is_negative)
+
+
+def process_decimal_string(dec_str, is_negative):
+    """
+    Helper function to process and validate decimal string.
+    Args:
+        dec_str (str): Decimal string to process
+        is_negative (bool): Whether the number is negative
+    Returns:
+        int or float: The decimal value, or None if invalid format
+    """
+    is_float = False
     valid_dec = "0123456789"
     float_count = 0
+
+    # Validate all characters
     for digit in dec_str:
         if digit not in valid_dec:
             if digit == '.' and float_count < 1:
                 is_float = True
-                float_count = float_count + 1
+                float_count += 1
             else:
                 return None
 
-    result = 0
+    # Convert to number
     if is_float:
-        # Since it is float, split into two
         splits = dec_str.split('.')
-
         int_value = str_to_int(splits[0])
-
         frac_value = str_to_int(splits[1])
 
-        # Normalize frac part
+        # Normalize fractional part
         frac_value = frac_value / (10 ** len(splits[1]))
-
         result = int_value + frac_value
-        if is_negative:
-            result = -result
     else:
         result = str_to_int(dec_str)
 
-        if is_negative:
-            result = -result
+    # Apply negative sign if needed
+    if is_negative:
+        result = -result
 
     return result
 
