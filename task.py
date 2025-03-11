@@ -91,7 +91,7 @@ def conv_endian(num, endian="big"):
 
     # set up variables
     HEX_DIGITS = "0123456789ABCDEF"  # hex digits table
-    NEGATIVE = False  # flag if nun is negative or not
+    is_negative = False  # flag if nun is negative or not
 
     # if num is negative --> make num a postive so we can convert it
     # will add negative sign at end
@@ -112,8 +112,8 @@ def conv_endian(num, endian="big"):
 
     # convert num to hex and assign it to hex_num
     while num > 0:
-        r = num % 16
-        hex_num = HEX_DIGITS[r] + hex_num
+        remainder = num % 16
+        hex_num = HEX_DIGITS[remainder] + hex_num
         num //= 16
 
     # pad hex_num with leading 0 if uneven
@@ -121,7 +121,7 @@ def conv_endian(num, endian="big"):
         hex_num = "0" + hex_num
 
     # add spaces
-    chunks = [hex_num[i:i+2] for i in range(0, len(hex_num), 2)]
+    chunks = [hex_num[i : i + 2] for i in range(0, len(hex_num), 2)]
     hex_num = " ".join(chunks)
 
     # if endian flag is little --> reverse the byte order
