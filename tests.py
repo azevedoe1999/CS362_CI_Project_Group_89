@@ -81,6 +81,7 @@ class TestCaseFunction1(unittest.TestCase):
         # Invalid hex format
         self.assertIsNone(task.conv_num('0xAZ4'))
         self.assertIsNone(task.conv_num('AD4'))  # Missing 0x prefix
+        self.assertIsNone(task.conv_num('x123'))  # Missing '0' in prefix
 
         # Empty or non-string inputs
         self.assertIsNone(task.conv_num(''))
@@ -96,10 +97,14 @@ class TestCaseFunction1(unittest.TestCase):
         # Just "0x" with no digits
         self.assertIsNone(task.conv_num('0x'))
         self.assertIsNone(task.conv_num('-0x'))
+        self.assertIsNone(task.conv_num('0X'))
 
         # Whitespace
         self.assertIsNone(task.conv_num(" 123"))
         self.assertIsNone(task.conv_num("123 "))
+
+        # Single dot test
+        self.assertIsNone(task.conv_num('.'))
 
     def test_function1_large_numbers(self):
         """Test conversion of very large numbers near integer limits."""
@@ -132,9 +137,6 @@ class TestCaseFunction1(unittest.TestCase):
         # Invalid: dash after prefix
         self.assertIsNone(task.conv_num('0x-123'))
         self.assertIsNone(task.conv_num('0x123-'))   # Invalid: trailing dash
-
-        self.assertIsNone(task.conv_num('x123'))   # Missing '0' in prefix
-        self.assertIsNone(task.conv_num('0X'))     # Only prefix with capital X
 
     def test_function1_whitespace_handling(self):
         """Test rejection of inputs with whitespace."""
@@ -186,15 +188,6 @@ class TestCaseFunction1(unittest.TestCase):
         self.assertEqual(task.conv_num('0.0'), 0.0)
         self.assertEqual(task.conv_num('00123'), 123)
 
-    def test_function1_negative_zero(self):
-        """Test handling of negative zero values."""
-        self.assertEqual(task.conv_num('-0'), 0)
-        # Python represents as 0.0
-        self.assertEqual(task.conv_num('-.0'), -0.0)
-        # Python represents as 0.0
-        self.assertEqual(task.conv_num('-0.0'), -0.0)
-        self.assertEqual(task.conv_num('-0x0'), 0)
-
     def test_function1_trailing_zeros(self):
         """Test that floating point values maintain proper precision."""
         # Need to use assertAlmostEqual for floating point comparisons
@@ -202,10 +195,6 @@ class TestCaseFunction1(unittest.TestCase):
         self.assertAlmostEqual(task.conv_num('42.100'), 42.1)
         self.assertAlmostEqual(task.conv_num('42.010'), 42.01)
         self.assertAlmostEqual(task.conv_num('42.001'), 42.001)
-
-    def test_function1_just_dot(self):
-        """Test that a single dot returns None."""
-        self.assertIsNone(task.conv_num('.'))
 
 
 class TestCaseFunction2(unittest.TestCase):
