@@ -27,7 +27,37 @@ def convert_hex(hex_str):
     Returns:
         int: The decimal value, or None if invalid format
     """
-    return
+    # Find if hex number is negative
+    is_negative = False
+    if hex_str.startswith('-'):
+        is_negative = True
+        hex_str = hex_str[1:]  # Trim negative sign
+
+    # Trim 0x prefix
+    hex_digits = hex_str[2:].lower()
+
+    # Check if all characters are valid
+    valid_hex = "0123456789abcdef"
+    for digit in hex_digits:
+        if digit not in valid_hex:
+            return None
+
+    # Conversion
+    decimal_value = 0
+    for digit in hex_digits:
+        # Convert each hex digit to its decimal value
+        if digit in "0123456789":
+            digit_value = ord(digit) - ord('0')
+        else:
+            digit_value = ord(digit) - ord('a') + 10
+
+        decimal_value = decimal_value * 16 + digit_value
+
+    # Negate if needed
+    if is_negative:
+        decimal_value = -decimal_value
+
+    return decimal_value
 
 
 # helper function for function 1 to convert decim
