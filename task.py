@@ -18,7 +18,6 @@ def conv_num(num_str):
         return convert_decimal(num_str)
 
 
-# helper function for function 1 to convert hex
 def convert_hex(hex_str):
     """
     Converts a hexadecimal string to a decimal integer.
@@ -60,8 +59,24 @@ def convert_hex(hex_str):
     return decimal_value
 
 
-# helper function for function 1 to convert decim
-def convert_decimal(hex_str):
+def str_to_int(digit_str):
+    """
+    Helper function to convert a string of digits to an integer.
+
+    Args:
+        digit_str (str): String containing only digits
+
+    Returns:
+        int: The integer value
+    """
+    int_value = 0
+    for digit in digit_str:
+        digit_value = ord(digit) - ord('0')
+        int_value = int_value * 10 + digit_value
+    return int_value
+
+
+def convert_decimal(dec_str):
     """
     Converts a decimal string to a number.
     Args:
@@ -69,7 +84,55 @@ def convert_decimal(hex_str):
     Returns:
         int or float: The decimal value, or None if invalid format
     """
-    return
+    is_float = False  # Flag for float number
+
+    # Find if decimal number is negative
+    is_negative = False
+    if dec_str.startswith('-'):
+        is_negative = True
+        dec_str = dec_str[1:]  # Trim negative sign
+
+    # Normalize cases like .45
+    if dec_str.startswith('.'):
+        dec_str = '0' + dec_str
+
+    # Normalize cases like 123.
+    if dec_str.endswith('.'):
+        dec_str = dec_str + '0'
+
+    # Check if all characters are valid
+    valid_dec = "0123456789"
+    float_count = 0
+    for digit in dec_str:
+        if digit not in valid_dec:
+            if digit == '.' and float_count < 1:
+                is_float = True
+                float_count = float_count + 1
+            else:
+                return None
+
+    result = None
+    if is_float:
+        # Since it is float, split into two
+        splits = dec_str.split('.')
+
+        int_value = str_to_int(splits[0])
+
+        frac_value = str_to_int(splits[1])
+
+        # Normalize frac part
+        frac_value = frac_value / (10 ** len(splits[1]))
+
+        result = int_value + frac_value
+        if is_negative:
+            result = -result
+    else:
+        int_value = str_to_int(dec_str)
+
+        if is_negative:
+            result = -int_value
+
+    return result
 
 
 # function 2
