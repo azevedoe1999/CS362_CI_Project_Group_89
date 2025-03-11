@@ -125,7 +125,7 @@ def conv_endian(num, endian="big"):
     hex_num = " ".join(chunks)
 
     # if endian flag is little --> reverse the byte order
-    if endian == "little":
+    if endian_map[endian]:
         reverse = hex_num.split()
         hex_num = reverse[::-1]
         hex_num = " ".join(hex_num)
