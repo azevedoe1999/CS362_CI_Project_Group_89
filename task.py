@@ -3,6 +3,24 @@ def conv_num(num_str):
     """
     This function
     """
+    # Check if input is valid
+    if not isinstance(num_str, str) or num_str == '':
+        return None
+
+    # Check if it's a hexadecimal number
+    if num_str.lower().startswith('0x') or num_str.lower().startswith('-0x'):
+        return convert_hex(num_str)
+    else:
+        return convert_decimal(num_str)
+
+
+# helper function for function 1 to convert hex
+def convert_hex(hex_str):
+    return
+
+
+# helper function for function 1 to convert decim
+def convert_decimal(hex_str):
     return
 
 
