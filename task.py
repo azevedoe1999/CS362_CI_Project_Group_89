@@ -99,8 +99,9 @@ def conv_endian(num, endian="big"):
         is_negative = True
         num = abs(num)
 
-    # check if endian is vaild --> if not, return None
-    if endian != "big" and endian != "little":
+    # Dictionary for endian mapping
+    endian_map = {"big": False, "little": True}
+    if endian not in endian_map:
         return None
 
     hex_num = ""  # store hex number we get from num
